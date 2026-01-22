@@ -36,61 +36,9 @@ export function Header() {
     { path: '/historique', label: '📜 Historique' },
   ];
 
-  // Debounce search
-  useEffect(() => {
-    if (searchQuery.length < 2) {
-      setSearchResults([]);
-      setIsSearchOpen(false);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      try {
-        const results = await studentService.searchStudents(searchQuery);
-        setSearchResults(results);
-        setIsSearchOpen(results.length > 0);
-      } catch (error) {
-        console.error('Search error:', error);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Click outside to close
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setIsSearchOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Keyboard shortcut Ctrl+K
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        document.getElementById('header-search')?.focus();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   const handleLogout = async () => {
     await logout();
     navigate('/login');
-  };
-
-  const handleSelectStudent = (studentId: string) => {
-    navigate(`/dashboard?student=${studentId}`);
-    setSearchQuery('');
-    setIsSearchOpen(false);
   };
 
   return (
@@ -113,56 +61,14 @@ export function Header() {
               className={cn(
                 'px-4 py-2 rounded-lg font-medium transition-colors text-sm',
                 location.pathname === item.path
-                  ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-primary'
-                  : 'text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                  ? 'bg-[var(--violet-very-light)] text-[var(--text-primary)]'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]'
               )}
             >
               {item.label}
             </Link>
           ))}
         </nav>
-
-        {/* Search Bar */}
-        <div className="flex-1 max-w-xl mx-8 relative" ref={searchRef}>
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              id="header-search"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Rechercher un élève (Ctrl+K)"
-              className="pl-12 h-12 text-base border-2 focus:border-violet-primary"
-            />
-          </div>
-
-          {/* Search Results Dropdown */}
-          {isSearchOpen && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--bg-secondary)] rounded-xl shadow-2xl border-2 border-[var(--border)] max-h-96 overflow-y-auto">
-              {searchResults.map((student) => (
-                <button
-                  key={student.value}
-                  onClick={() => handleSelectStudent(student.value)}
-                  className="w-full flex items-center gap-4 p-4 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors border-b border-[var(--border)] last:border-b-0"
-                >
-                  <Avatar
-                    firstName={student.first_name}
-                    lastName={student.last_name}
-                    size="sm"
-                  />
-                  <div className="flex-1 text-left">
-                    <div className="font-semibold text-[var(--text-primary)]">
-                      {student.last_name.toUpperCase()} {student.first_name}
-                    </div>
-                    <div className="text-sm text-[var(--text-secondary)]">
-                      {student.class_name || 'Sans classe'}
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
@@ -171,7 +77,7 @@ export function Header() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="rounded-lg hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]"
           >
             {actualTheme === 'dark' ? (
               <Sun className="w-5 h-5" />
@@ -180,24 +86,10 @@ export function Header() {
             )}
           </Button>
 
-          {/* Notifications */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 relative"
-          >
-            <Bell className="w-5 h-5" />
-            {pendingNotifications > 0 && (
-              <Badge className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
-                {pendingNotifications}
-              </Badge>
-            )}
-          </Button>
-
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+              <Button variant="ghost" className="flex items-center gap-2 rounded-lg hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]">
                 {user && (
                   <>
                     <Avatar
