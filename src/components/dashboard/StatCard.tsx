@@ -19,16 +19,16 @@ const variantStyles = {
   success: 'from-green-500 to-emerald-600',
 };
 
-export function StatCard({ 
-  title, 
-  value, 
-  icon: Icon, 
+export function StatCard({
+  title,
+  value,
+  icon: Icon,
   subtitle,
   variant = 'default',
-  trend 
+  trend
 }: StatCardProps) {
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 dark:hover:shadow-violet-900/20 dark:border-gray-700">
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -45,7 +45,7 @@ export function StatCard({
               {trend && (
                 <span className={cn(
                   "text-sm font-semibold",
-                  trend.isPositive ? "text-green-600" : "text-red-600"
+                  trend.isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
                 )}>
                   {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}
                 </span>
@@ -58,7 +58,7 @@ export function StatCard({
             )}
           </div>
           <div className={cn(
-            "rounded-full p-3 bg-gradient-to-br",
+            "rounded-full p-3 bg-gradient-to-br shadow-lg dark:shadow-md",
             variantStyles[variant]
           )}>
             <Icon className="w-8 h-8 text-white" />

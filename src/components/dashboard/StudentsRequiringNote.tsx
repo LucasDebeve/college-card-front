@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Check, X, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
@@ -122,10 +122,10 @@ export function StudentsRequiringNote({ onRefresh }: StudentsRequiringNoteProps)
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="dark:border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-orange-500" />
+            <AlertTriangle className="w-5 h-5 text-orange-500 dark:text-orange-400" />
             Élèves nécessitant un mot dans le carnet
           </CardTitle>
         </CardHeader>
@@ -140,11 +140,11 @@ export function StudentsRequiringNote({ onRefresh }: StudentsRequiringNoteProps)
 
   if (!data || data.count === 0) {
     return (
-      <Card>
+      <Card className="dark:border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-orange-500" />
+              <AlertTriangle className="w-5 h-5 text-orange-500 dark:text-orange-400" />
               Élèves nécessitant un mot dans le carnet
             </div>
             <div className="flex items-center gap-2">
@@ -193,11 +193,11 @@ export function StudentsRequiringNote({ onRefresh }: StudentsRequiringNoteProps)
   }
 
   return (
-    <Card>
+    <Card className="dark:border-gray-700">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-orange-500" />
+            <AlertTriangle className="w-5 h-5 text-orange-500 dark:text-orange-400" />
             Élèves nécessitant un mot dans le carnet
           </div>
           <div className="flex items-center gap-2">
@@ -242,8 +242,8 @@ export function StudentsRequiringNote({ onRefresh }: StudentsRequiringNoteProps)
               className={cn(
                 'flex items-center justify-between p-4 rounded-lg border transition-all',
                 student.note_manually_added
-                  ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
-                  : 'bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800'
+                  ? 'bg-green-primary/20 border-green-primary'
+                  : 'bg-violet-primary/20 border-violet-primary'
               )}
             >
               <div className="flex-1">
@@ -260,7 +260,7 @@ export function StudentsRequiringNote({ onRefresh }: StudentsRequiringNoteProps)
                     {student.forgot_count} oubli{student.forgot_count > 1 ? 's' : ''}
                   </span>
                   {student.note_manually_added && student.note_manually_added_at && (
-                    <span className="text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
+                    <span className="text-green-primary font-medium flex items-center gap-1">
                       <Check className="w-4 h-4" />
                       Mot rentré le {new Date(student.note_manually_added_at).toLocaleDateString('fr-FR')}
                     </span>
@@ -285,7 +285,7 @@ export function StudentsRequiringNote({ onRefresh }: StudentsRequiringNoteProps)
                     size="sm"
                     onClick={() => handleMarkAsAdded(student)}
                     disabled={markingStudentId === student.student_id}
-                    className="gap-2 bg-green-600 hover:bg-green-700"
+                    className="gap-2 bg-violet-primary hover:bg-violet-dark"
                   >
                     <Check className="w-4 h-4" />
                     Marquer comme rentré

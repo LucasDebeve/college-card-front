@@ -69,7 +69,7 @@ export function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Hero Section - Search */}
-      <div className="bg-gradient-to-br from-violet-50 to-green-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-12 text-center">
+      <div className="bg-gradient-to-br from-[var(--violet-very-light)]/40 to-[var(--green-very-light)]/40 border-[var(--violet-very-light)] rounded-2xl p-12 text-center">
         <h1 className="text-3xl font-bold mb-2 text-[var(--text-primary)]">
           🔍 Rechercher un élève pour enregistrer un oubli
         </h1>

@@ -121,14 +121,14 @@ export function SearchBar({ onSelectStudent }: SearchBarProps) {
       </div>
 
       {isOpen && results.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto z-50">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--background)] rounded-xl shadow-2xl border-2 border-gray-20 max-h-96 overflow-y-auto z-50">
           {results.map((student, index) => (
             <button
               key={student.value}
               onClick={() => handleSelect(student)}
               className={cn(
-                'w-full flex items-center gap-4 p-4 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0',
-                selectedIndex === index && 'bg-violet-50 dark:bg-violet-900/20'
+                'w-full flex items-center gap-4 p-4 hover:bg-[var(--violet-very-light)]/50 transition-colors border-b border-gray-100 last:border-b-0',
+                selectedIndex === index && 'bg-[var(--violet-very-light)]'
               )}
             >
               <Avatar
@@ -137,10 +137,10 @@ export function SearchBar({ onSelectStudent }: SearchBarProps) {
                 size="sm"
               />
               <div className="flex-1 text-left">
-                <div className="font-semibold text-gray-900 dark:text-gray-100">
+                <div className="font-semibold text-[var(--card-foreground)]">
                   {student.last_name.toUpperCase()} {student.first_name}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+                <div className="text-sm text-[var(--text-secondary)]">
                   {student.class_name || 'Sans classe'}
                 </div>
               </div>

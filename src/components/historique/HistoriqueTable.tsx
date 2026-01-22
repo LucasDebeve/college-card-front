@@ -12,7 +12,6 @@ import { Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import type { ForgotCard } from '@/types';
-import { cn } from '@/lib/utils';
 import { useEffect, useState, useCallback } from 'react';
 import { forgotCardService } from '@/services/forgotCardService';
 
@@ -134,13 +133,13 @@ export function HistoriqueTable({
     <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border)] overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="bg-gray-50 dark:bg-gray-800">
-            <TableHead className="font-bold">Date/Heure</TableHead>
-            <TableHead className="font-bold">Élève</TableHead>
-            <TableHead className="font-bold text-center">Classe</TableHead>
-            <TableHead className="font-bold">Surveillant</TableHead>
-            <TableHead className="font-bold text-center">Compteur</TableHead>
-            <TableHead className="font-bold text-center">Mot</TableHead>
+          <TableRow style={{ backgroundColor: 'var(--table-header-bg)' }}>
+            <TableHead className="font-bold text-[var(--text-primary)]">Date/Heure</TableHead>
+            <TableHead className="font-bold text-[var(--text-primary)]">Élève</TableHead>
+            <TableHead className="font-bold text-center text-[var(--text-primary)]">Classe</TableHead>
+            <TableHead className="font-bold text-[var(--text-primary)]">Surveillant</TableHead>
+            <TableHead className="font-bold text-center text-[var(--text-primary)]">Compteur</TableHead>
+            <TableHead className="font-bold text-center text-[var(--text-primary)]">Mot</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -150,10 +149,22 @@ export function HistoriqueTable({
             return (
               <TableRow
                 key={forgot.id}
-                className={cn(
-                  'cursor-pointer hover:bg-violet-50 dark:hover:bg-violet-900/20',
-                  forgot.note_manually_added && 'bg-red-50 dark:bg-red-900/10'
-                )}
+                className="cursor-pointer"
+                style={{
+                  backgroundColor: forgot.note_manually_added ? 'var(--table-row-warning)' : undefined,
+                }}
+                onMouseEnter={(e) => {
+                  if (!forgot.note_manually_added) {
+                    e.currentTarget.style.backgroundColor = 'var(--table-row-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!forgot.note_manually_added) {
+                    e.currentTarget.style.backgroundColor = '';
+                  } else {
+                    e.currentTarget.style.backgroundColor = 'var(--table-row-warning)';
+                  }
+                }}
                 onClick={() => onRowClick?.(forgot)}
               >
                 <TableCell>
@@ -179,7 +190,7 @@ export function HistoriqueTable({
                 </TableCell>
 
                 <TableCell className="text-center">
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="text-[var(--text-secondary)]">
                     {forgot.student_details.class_name || 'N/A'}
                   </Badge>
                 </TableCell>

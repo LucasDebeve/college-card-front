@@ -137,7 +137,7 @@ export function ForgotCardModal({
         ) : (
           <div className="space-y-6">
             {/* Student Info */}
-            <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div className="flex items-center gap-4 p-4 bg-[var(--card)] rounded-lg">
               <Avatar
                 firstName={student.first_name}
                 lastName={student.last_name}
@@ -157,10 +157,10 @@ export function ForgotCardModal({
             <div className={cn(
               "p-4 rounded-lg border-2",
               isThirdForgot 
-                ? "bg-red-50 dark:bg-red-900/10 border-red-500 animate-pulse-red" 
+                ? "bg-[var(--violet-very-light)]/20 border-[var(--violet-very-light)]"
                 : weekCount >= 1
-                ? "bg-orange-50 dark:bg-orange-900/10 border-orange-500"
-                : "bg-green-50 dark:bg-green-900/10 border-green-500"
+                ? "bg-[var(--orange-very-light)]/20 border-[var(--orange-very-light)]"
+                : "bg-[var(--green-very-light)]/20 border-[var(--green-very-light)]"
             )}>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">
@@ -169,22 +169,6 @@ export function ForgotCardModal({
                 <CounterBadge current={weekCount} showDots />
               </div>
             </div>
-
-            {/* Third Forgot Alert */}
-            {isThirdForgot && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  <p className="font-semibold mb-2">
-                    Il faudra manuellement envoyer le mot dans le carnet à l'élève dont voici le modèle :
-                  </p>
-                  <div className="bg-white/50 dark:bg-gray-900/50 p-3 rounded border-l-4 border-red-600 text-sm italic">
-                    Troisième oubli de carte cette semaine ({format(weekStart, 'dd/MM/yyyy')} - {format(weekEnd, 'dd/MM/yyyy')}).<br />
-                    Au prochain oubli, 1 heure de retenue sera attribuée.
-                  </div>
-                </AlertDescription>
-              </Alert>
-            )}
 
             {/* Recent History */}
             {recentForgots.length > 0 && (

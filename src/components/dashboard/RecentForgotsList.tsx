@@ -80,7 +80,7 @@ export function RecentForgotsList({ forgotCards, isLoading }: RecentForgotsListP
         position: positionMap.get(forgot.id) || 1,
       }));
 
-      setEnrichedForgotCards(enriched);
+      setEnrichedForgotCards(enriched.slice(0, 5));
     } catch (error) {
       console.error('Error enriching forgots with positions:', error);
       // En cas d'erreur, utiliser week_count comme fallback
@@ -88,7 +88,7 @@ export function RecentForgotsList({ forgotCards, isLoading }: RecentForgotsListP
         ...forgot,
         position: forgot.week_count || 1,
       }));
-      setEnrichedForgotCards(fallback);
+      setEnrichedForgotCards(fallback.slice(0, 5));
     } finally {
       setIsEnriching(false);
     }
@@ -116,7 +116,7 @@ export function RecentForgotsList({ forgotCards, isLoading }: RecentForgotsListP
   }
 
   return (
-    <Card>
+    <Card className="dark:border-gray-700">
       <CardHeader>
         <CardTitle>📜 Derniers oublis enregistrés</CardTitle>
         <CardDescription>
@@ -137,15 +137,14 @@ export function RecentForgotsList({ forgotCards, isLoading }: RecentForgotsListP
         ) : (
           <div className="space-y-2">
             {enrichedForgotCards.map((forgot) => {
-              const weekCount = forgot.week_count || 3;
               const position = forgot.position;
 
               return (
                 <div
                   key={forgot.id}
                   className={cn(
-                    "flex items-center gap-4 p-4 rounded-lg border border-[var(--border)] transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer",
-                    forgot.note_manually_added && "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800"
+                    "flex items-center gap-4 p-4 rounded-lg border border-[var(--border)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)] cursor-pointer",
+                    forgot.note_manually_added && "bg-[var(--danger-red-50)]/20 border-[var(--danger-red-200)] hover:bg-[var(--danger-red-50)]/30"
                   )}
                   onClick={() => navigate(`/historique?forgot=${forgot.id}`)}
                 >
