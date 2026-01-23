@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Calendar, TrendingUp, AlertTriangle, FileText } from 'lucide-react';
+import { Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { RecentForgotsList } from '@/components/dashboard/RecentForgotsList';
 import { StudentsRequiringNote } from '@/components/dashboard/StudentsRequiringNote';

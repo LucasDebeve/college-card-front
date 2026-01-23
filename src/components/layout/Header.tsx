@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, Bell, Sun, Moon, LogOut, User } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Sun, Moon, LogOut, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,12 +9,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/store/authStore';
 import { useThemeStore } from '@/store/themeStore';
 import { Avatar } from '@/components/shared/Avatar';
-import { studentService } from '@/services/studentService';
-import type { StudentSearchResult } from '@/types';
 import { cn } from '@/lib/utils';
 
 export function Header() {
@@ -24,11 +19,6 @@ export function Header() {
   const location = useLocation();
   const { user, logout } = useAuthStore();
   const { actualTheme, toggleTheme } = useThemeStore();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<StudentSearchResult[]>([]);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [pendingNotifications, setPendingNotifications] = useState(0);
-  const searchRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
     { path: '/dashboard', label: '🏠 Accueil' },

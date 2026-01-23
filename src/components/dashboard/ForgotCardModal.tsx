@@ -10,13 +10,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/shared/Avatar';
 import { CounterBadge } from '@/components/shared/CounterBadge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { forgotCardService } from '@/services/forgotCardService';
 import { toast } from 'sonner';
 import { format, startOfISOWeek, endOfISOWeek } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import type { StudentSearchResult, ForgotCard } from '@/types';
+import type { StudentSearchResult } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface ForgotCardModalProps {
