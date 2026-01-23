@@ -13,7 +13,6 @@ export function DashboardPage() {
   const [searchParams] = useSearchParams();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentForgots, setRecentForgots] = useState<ForgotCard[]>([]);
-  const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [isLoadingForgots, setIsLoadingForgots] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState<StudentSearchResult | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,13 +31,10 @@ export function DashboardPage() {
   const loadDashboardData = async () => {
     try {
       // Charger les statistiques
-      setIsLoadingStats(true);
       const statsData = await forgotCardService.getDashboardStats();
       setStats(statsData);
     } catch (error) {
       console.error('Error loading stats:', error);
-    } finally {
-      setIsLoadingStats(false);
     }
 
     try {
@@ -56,7 +52,7 @@ export function DashboardPage() {
     }
   };
 
-  const handleSelectStudent = (studentId: string, studentData: StudentSearchResult) => {
+  const handleSelectStudent = (_studentId: string, studentData: StudentSearchResult) => {
     setSelectedStudent(studentData);
     setIsModalOpen(true);
   };

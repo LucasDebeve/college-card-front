@@ -61,7 +61,7 @@ export function ClassChart({ data, isLoading }: ClassChartProps) {
                 labelStyle={{ color: 'var(--text-primary)', fontWeight: 'bold' }}
               />
               <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-                {data.map((entry, index) => (
+                {data.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Bar>

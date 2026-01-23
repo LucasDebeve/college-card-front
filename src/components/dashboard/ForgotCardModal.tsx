@@ -13,7 +13,7 @@ import { CounterBadge } from '@/components/shared/CounterBadge';
 import { Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { forgotCardService } from '@/services/forgotCardService';
 import { toast } from 'sonner';
-import { format, startOfISOWeek, endOfISOWeek } from 'date-fns';
+import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import type { StudentSearchResult } from '@/types';
 import { cn } from '@/lib/utils';
@@ -103,9 +103,6 @@ export function ForgotCardModal({
   if (!student) return null;
 
   const isThirdForgot = weekCount === 2;
-  const now = new Date();
-  const weekStart = startOfISOWeek(now);
-  const weekEnd = endOfISOWeek(now);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

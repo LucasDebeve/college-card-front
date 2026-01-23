@@ -54,14 +54,17 @@ export function HeatmapCalendar({ data, isLoading }: HeatmapCalendarProps) {
               }
               return 'color-scale-4';
             }}
-            tooltipDataAttrs={(value: any) => {
+            tooltipDataAttrs={(value) => {
               if (!value || !value.date) {
-                return {};
+                return {
+                  'data-tooltip-id': 'heatmap-tooltip',
+                  'data-tooltip-content': '',
+                } as React.SVGAttributes<SVGSVGElement>;
               }
               return {
                 'data-tooltip-id': 'heatmap-tooltip',
                 'data-tooltip-content': `${format(new Date(value.date), 'dd MMMM yyyy', { locale: fr })}: ${value.count || 0} oublis`,
-              };
+              } as React.SVGAttributes<SVGSVGElement>;
             }}
             showWeekdayLabels
           />
