@@ -124,6 +124,7 @@ export function HistoriquePage() {
           // TODO: Open detail modal
           console.log('Clicked:', forgot);
         }}
+        onDelete={loadForgotCards}
       />
 
       {/* Pagination */}

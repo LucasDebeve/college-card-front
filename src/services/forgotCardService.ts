@@ -106,4 +106,9 @@ export const forgotCardService = {
     );
     return response.data;
   },
+
+  // Supprimer un oubli de carte
+  async deleteForgotCard(id: string): Promise<void> {
+    await api.delete(`/forgot-cards/${id}/delete/`);
+  },
 };

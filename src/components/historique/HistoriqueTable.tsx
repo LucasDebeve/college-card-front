@@ -7,18 +7,29 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { CounterBadge } from '@/components/shared/CounterBadge';
-import { Mail } from 'lucide-react';
+import { Mail, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import type { ForgotCard } from '@/types';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { forgotCardService } from '@/services/forgotCardService';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 interface HistoriqueTableProps {
   forgotCards: ForgotCard[];
   isLoading?: boolean;
   onRowClick?: (forgot: ForgotCard) => void;
+  onDelete?: () => void;
 }
 
 interface ForgotCardWithPosition extends ForgotCard {
@@ -28,84 +39,49 @@ interface ForgotCardWithPosition extends ForgotCard {
 export function HistoriqueTable({
   forgotCards,
   isLoading,
-  onRowClick
+  onRowClick,
+  onDelete
 }: HistoriqueTableProps) {
-  const [enrichedForgotCards, setEnrichedForgotCards] = useState<ForgotCardWithPosition[]>([]);
-  const [isEnriching, setIsEnriching] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [forgotToDelete, setForgotToDelete] = useState<ForgotCardWithPosition | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const enrichForgotsWithPositions = useCallback(async () => {
-    if (forgotCards.length === 0) {
-      setEnrichedForgotCards([]);
-      setIsEnriching(false);
-      return;
-    }
-
-    try {
-      setIsEnriching(true);
-
-      // Grouper les oublis par élève et semaine
-      const studentWeekMap = new Map<string, ForgotCard[]>();
-
-      for (const forgot of forgotCards) {
-        const key = `${forgot.student}-${forgot.week_number}-${forgot.year}`;
-        if (!studentWeekMap.has(key)) {
-          studentWeekMap.set(key, []);
-        }
-        studentWeekMap.get(key)!.push(forgot);
-      }
-
-      // Pour chaque groupe, charger tous les oublis de la semaine
-      const positionMap = new Map<string, number>();
-
-      for (const groupForgots of studentWeekMap.values()) {
-        const firstForgot = groupForgots[0];
-
-        // Charger tous les oublis de cette semaine pour cet élève
-        const allWeekForgots = await forgotCardService.getForgotCards({
-          student_id: firstForgot.student,
-          page_size: 100,
-        });
-
-        // Filtrer pour ne garder que les oublis de cette semaine
-        const weekForgots = allWeekForgots.results.filter(
-          (f) => f.week_number === firstForgot.week_number && f.year === firstForgot.year
-        );
-
-        // Trier par date
-        weekForgots.sort((a, b) =>
-          new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
-        );
-
-        // Assigner une position à chaque oubli
-        weekForgots.forEach((forgot, index) => {
-          positionMap.set(forgot.id, index + 1);
-        });
-      }
-
-      // Enrichir les oublis avec leur position
-      const enriched = forgotCards.map((forgot) => ({
-        ...forgot,
-        position: positionMap.get(forgot.id) || 1,
-      }));
-
-      setEnrichedForgotCards(enriched);
-    } catch (error) {
-      console.error('Error enriching forgots with positions:', error);
-      // En cas d'erreur, utiliser week_count comme fallback
-      const fallback = forgotCards.map((forgot) => ({
-        ...forgot,
-        position: forgot.week_count || 1,
-      }));
-      setEnrichedForgotCards(fallback);
-    } finally {
-      setIsEnriching(false);
-    }
+  // Utiliser directement week_count fourni par l'API
+  const enrichedForgotCards = useMemo(() => {
+    return forgotCards.map((forgot) => ({
+      ...forgot,
+      position: forgot.week_count || 1,
+    }));
   }, [forgotCards]);
 
-  useEffect(() => {
-    enrichForgotsWithPositions();
-  }, [enrichForgotsWithPositions]);
-  if (isLoading || isEnriching) {
+  const handleDeleteClick = (forgot: ForgotCardWithPosition, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setForgotToDelete(forgot);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!forgotToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await forgotCardService.deleteForgotCard(forgotToDelete.id);
+      toast.success('Oubli supprimé', {
+        description: `L'oubli de ${forgotToDelete.student_details.full_name} a été supprimé avec succès.`,
+      });
+      setDeleteDialogOpen(false);
+      setForgotToDelete(null);
+      onDelete?.();
+    } catch {
+      toast.error('Erreur', {
+        description: 'Impossible de supprimer cet oubli.',
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  if (isLoading) {
     return (
       <div className="space-y-2">
         {[...Array(10)].map((_, i) => (
@@ -130,18 +106,20 @@ export function HistoriqueTable({
   }
 
   return (
-    <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border)] overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow style={{ backgroundColor: 'var(--table-header-bg)' }}>
-            <TableHead className="font-bold text-[var(--text-primary)]">Date/Heure</TableHead>
-            <TableHead className="font-bold text-[var(--text-primary)]">Élève</TableHead>
-            <TableHead className="font-bold text-center text-[var(--text-primary)]">Classe</TableHead>
-            <TableHead className="font-bold text-[var(--text-primary)]">Surveillant</TableHead>
-            <TableHead className="font-bold text-center text-[var(--text-primary)]">Compteur</TableHead>
-            <TableHead className="font-bold text-center text-[var(--text-primary)]">Mot</TableHead>
-          </TableRow>
-        </TableHeader>
+    <>
+      <div className="bg-[var(--bg-secondary)] rounded-xl border border-[var(--border)] overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow style={{ backgroundColor: 'var(--table-header-bg)' }}>
+              <TableHead className="font-bold text-[var(--text-primary)]">Date/Heure</TableHead>
+              <TableHead className="font-bold text-[var(--text-primary)]">Élève</TableHead>
+              <TableHead className="font-bold text-center text-[var(--text-primary)]">Classe</TableHead>
+              <TableHead className="font-bold text-[var(--text-primary)]">Surveillant</TableHead>
+              <TableHead className="font-bold text-center text-[var(--text-primary)]">Compteur</TableHead>
+              <TableHead className="font-bold text-center text-[var(--text-primary)]">Mot</TableHead>
+              <TableHead className="font-bold text-center text-[var(--text-primary)]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
         <TableBody>
           {enrichedForgotCards.map((forgot) => {
             const position = forgot.position;
@@ -149,7 +127,6 @@ export function HistoriqueTable({
             return (
               <TableRow
                 key={forgot.id}
-                className="cursor-pointer"
                 style={{
                   backgroundColor: forgot.note_manually_added ? 'var(--table-row-warning)' : undefined,
                 }}
@@ -216,11 +193,64 @@ export function HistoriqueTable({
                     <Badge variant="outline">—</Badge>
                   )}
                 </TableCell>
+
+                <TableCell className="text-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-[var(--danger-red-200)]/20 hover:text-red-500 cursor-pointer"
+                    onClick={(e) => handleDeleteClick(forgot, e)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </TableCell>
               </TableRow>
             );
           })}
         </TableBody>
       </Table>
     </div>
+
+    <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirmer la suppression</DialogTitle>
+          <DialogDescription>
+            {forgotToDelete && (
+              <>
+                Êtes-vous sûr de vouloir supprimer l'oubli de{' '}
+                <strong>{forgotToDelete.student_details.full_name}</strong> enregistré le{' '}
+                <strong>
+                  {format(new Date(forgotToDelete.recorded_at), 'dd/MM/yyyy à HH:mm', {
+                    locale: fr,
+                  })}
+                </strong>
+                ?
+                <br />
+                <br />
+                Cette action est irréversible.
+              </>
+            )}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={isDeleting}
+          >
+            Annuler
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleConfirmDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? 'Suppression...' : 'Supprimer'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }

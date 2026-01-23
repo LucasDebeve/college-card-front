@@ -8,97 +8,27 @@ import { Clock, ArrowRight, Mail } from 'lucide-react';
 import { CounterBadge } from '@/components/shared/CounterBadge';
 import type { ForgotCard } from '@/types';
 import { cn } from '@/lib/utils';
-import { useEffect, useState, useCallback } from 'react';
-import { forgotCardService } from '@/services/forgotCardService';
+import { useMemo } from 'react';
 
 interface RecentForgotsListProps {
   forgotCards: ForgotCard[];
   isLoading?: boolean;
 }
 
-interface ForgotCardWithPosition extends ForgotCard {
-  position: number;
-}
-
 export function RecentForgotsList({ forgotCards, isLoading }: RecentForgotsListProps) {
   const navigate = useNavigate();
-  const [enrichedForgotCards, setEnrichedForgotCards] = useState<ForgotCardWithPosition[]>([]);
-  const [isEnriching, setIsEnriching] = useState(true);
 
-  const enrichForgotsWithPositions = useCallback(async () => {
-    if (forgotCards.length === 0) {
-      setEnrichedForgotCards([]);
-      setIsEnriching(false);
-      return;
-    }
-
-    try {
-      setIsEnriching(true);
-
-      // Grouper les oublis par élève et semaine
-      const studentWeekMap = new Map<string, ForgotCard[]>();
-
-      for (const forgot of forgotCards) {
-        const key = `${forgot.student}-${forgot.week_number}-${forgot.year}`;
-        if (!studentWeekMap.has(key)) {
-          studentWeekMap.set(key, []);
-        }
-        studentWeekMap.get(key)!.push(forgot);
-      }
-
-      // Pour chaque groupe, charger tous les oublis de la semaine
-      const positionMap = new Map<string, number>();
-
-      for (const groupForgots of studentWeekMap.values()) {
-        const firstForgot = groupForgots[0];
-
-        // Charger tous les oublis de cette semaine pour cet élève
-        const allWeekForgots = await forgotCardService.getForgotCards({
-          student_id: firstForgot.student,
-          page_size: 100,
-        });
-
-        // Filtrer pour ne garder que les oublis de cette semaine
-        const weekForgots = allWeekForgots.results.filter(
-          (f) => f.week_number === firstForgot.week_number && f.year === firstForgot.year
-        );
-
-        // Trier par date
-        weekForgots.sort((a, b) =>
-          new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
-        );
-
-        // Assigner une position à chaque oubli
-        weekForgots.forEach((forgot, index) => {
-          positionMap.set(forgot.id, index + 1);
-        });
-      }
-
-      // Enrichir les oublis avec leur position
-      const enriched = forgotCards.map((forgot) => ({
-        ...forgot,
-        position: positionMap.get(forgot.id) || 1,
-      }));
-
-      setEnrichedForgotCards(enriched.slice(0, 5));
-    } catch (error) {
-      console.error('Error enriching forgots with positions:', error);
-      // En cas d'erreur, utiliser week_count comme fallback
-      const fallback = forgotCards.map((forgot) => ({
+  // Utiliser directement week_count fourni par l'API
+  const enrichedForgotCards = useMemo(() => {
+    return forgotCards
+      .map((forgot) => ({
         ...forgot,
         position: forgot.week_count || 1,
-      }));
-      setEnrichedForgotCards(fallback.slice(0, 5));
-    } finally {
-      setIsEnriching(false);
-    }
+      }))
+      .slice(0, 5);
   }, [forgotCards]);
 
-  useEffect(() => {
-    enrichForgotsWithPositions();
-  }, [enrichForgotsWithPositions]);
-
-  if (isLoading || isEnriching) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
