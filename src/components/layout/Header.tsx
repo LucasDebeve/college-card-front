@@ -38,7 +38,7 @@ export function Header() {
         <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="text-4xl">🏫</div>
           <span className="text-xl font-bold bg-gradient-to-r from-violet-primary to-green-primary bg-clip-text text-transparent">
-            CollègeCard
+            VérifOubli
           </span>
         </Link>
 
