@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 interface EvolutionChartProps {
-  data: { day: string; count: number }[];
+  data: { day_of_week: string; day_number: number; count: number }[];
   isLoading?: boolean;
 }
 
@@ -60,15 +60,10 @@ export function EvolutionChart({ data, isLoading }: EvolutionChartProps) {
               <Area
                 type="monotone"
                 dataKey="count"
+                name="Oublis de carte"
                 stroke="#7C3AED"
                 strokeWidth={3}
                 fill="url(#colorCount)"
-              />
-              <Line
-                type="monotone"
-                dataKey="count"
-                stroke="#7C3AED"
-                strokeWidth={3}
                 dot={{ fill: '#7C3AED', strokeWidth: 2, r: 5 }}
                 activeDot={{ r: 7 }}
               />

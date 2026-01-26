@@ -295,7 +295,20 @@ body {
 
 /* Heatmap Calendar Styles */
 .heatmap-container {
-  padding: 20px 0;
+  padding: 12px 0;
+}
+
+.heatmap-frame {
+  max-width: 900px;
+  min-width: 520px;
+  margin: 0 auto;
+  overflow-y: hidden;
+}
+
+@media (max-width: 640px) {
+  .heatmap-frame {
+    min-width: 100%;
+  }
 }
 
 .react-calendar-heatmap {
@@ -303,7 +316,13 @@ body {
 }
 
 .react-calendar-heatmap text {
-  font-size: 10px;
+  font-size: 8px;
+  fill: var(--text-secondary);
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-month-label,
+.react-calendar-heatmap .react-calendar-heatmap-weekday-label {
+  font-size: 8px;
   fill: var(--text-secondary);
 }
 

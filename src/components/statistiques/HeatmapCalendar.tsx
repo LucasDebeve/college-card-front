@@ -1,3 +1,4 @@
+import { cloneElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
@@ -26,62 +27,56 @@ export function HeatmapCalendar({ data, isLoading }: HeatmapCalendarProps) {
 
   const today = new Date();
   const threeMonthsAgo = new Date();
-  threeMonthsAgo.setMonth(today.getMonth() - 3);
+  threeMonthsAgo.setMonth(today.getMonth() - 6);
+  const weekdayLabels = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  const periodLabel = `${format(threeMonthsAgo, 'dd MMM', { locale: fr })} → ${format(today, 'dd MMM', { locale: fr })}`;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>📅 Calendrier - Heatmap des oublis</CardTitle>
+        <p className="text-sm text-[var(--text-secondary)]">Vue des 90 derniers jours. Survolez une case pour voir le détail.</p>
       </CardHeader>
-      <CardContent>
-        <div className="heatmap-container">
-          <CalendarHeatmap
-            startDate={threeMonthsAgo}
-            endDate={today}
-            values={data}
-            classForValue={(value) => {
-              if (!value || value.count === 0) {
-                return 'color-empty';
-              }
-              if (value.count <= 5) {
-                return 'color-scale-1';
-              }
-              if (value.count <= 10) {
-                return 'color-scale-2';
-              }
-              if (value.count <= 15) {
-                return 'color-scale-3';
-              }
-              return 'color-scale-4';
-            }}
-            tooltipDataAttrs={(value) => {
-              if (!value || !value.date) {
-                return {
-                  'data-tooltip-id': 'heatmap-tooltip',
-                  'data-tooltip-content': '',
-                } as React.SVGAttributes<SVGSVGElement>;
-              }
-              return {
-                'data-tooltip-id': 'heatmap-tooltip',
-                'data-tooltip-content': `${format(new Date(value.date), 'dd MMMM yyyy', { locale: fr })}: ${value.count || 0} oublis`,
-              } as React.SVGAttributes<SVGSVGElement>;
-            }}
-            showWeekdayLabels
-          />
-          <ReactTooltip id="heatmap-tooltip" />
+      <CardContent className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-[var(--text-secondary)]">
+          <span>Période : {periodLabel}</span>
+          <span>Survolez une case pour détails</span>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center justify-end gap-2 mt-4 text-sm text-[var(--text-secondary)]">
-          <span>Moins</span>
-          <div className="flex gap-1">
-            <div className="w-4 h-4 rounded bg-gray-200 dark:bg-gray-700" />
-            <div className="w-4 h-4 rounded bg-violet-200 dark:bg-violet-900" />
-            <div className="w-4 h-4 rounded bg-violet-400 dark:bg-violet-700" />
-            <div className="w-4 h-4 rounded bg-violet-600 dark:bg-violet-500" />
-            <div className="w-4 h-4 rounded bg-violet-800 dark:bg-violet-400" />
+        <div className="heatmap-container overflow-x-auto">
+          <div className="heatmap-frame">
+            <CalendarHeatmap
+              startDate={threeMonthsAgo}
+              endDate={today}
+              values={data}
+              gutterSize={1}
+              classForValue={(value) => {
+                if (!value || value.count === 0) {
+                  return 'color-empty';
+                }
+                if (value.count >= 25) {
+                  return 'color-scale-4';
+                }
+                if (value.count >= 15) {
+                  return 'color-scale-3';
+                }
+                if (value.count >= 5) {
+                  return 'color-scale-2';
+                }
+                return 'color-scale-1';
+              }}
+              weekdayLabels={weekdayLabels}
+              showWeekdayLabels
+              transformDayElement={(rect) =>
+                cloneElement(rect, {
+                  width: 8,
+                  height: 8,
+                  rx: 2,
+                  ry: 2,
+                })
+              }
+            />
           </div>
-          <span>Plus</span>
         </div>
       </CardContent>
     </Card>

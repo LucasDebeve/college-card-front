@@ -129,6 +129,8 @@ export interface Statistics {
   total_students_concerned: number;
   top_students: TopStudent[];
   by_class: { student__student_class__name: string; count: number }[];
+  by_day_of_week: { day_of_week: string; day_number: number; count: number }[];
+  count_by_date: { date: string; count: number }[];
 }
 
 // API Response types

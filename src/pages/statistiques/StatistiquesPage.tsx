@@ -17,24 +17,6 @@ export function StatistiquesPage() {
   const [stats, setStats] = useState<Statistics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data pour l'évolution et heatmap (à remplacer par vraies données API)
-  const evolutionData = [
-    { day: 'Lun', count: 8 },
-    { day: 'Mar', count: 12 },
-    { day: 'Mer', count: 15 },
-    { day: 'Jeu', count: 10 },
-    { day: 'Ven', count: 18 },
-  ];
-
-  const heatmapData = Array.from({ length: 90 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (90 - i));
-    return {
-      date: date.toISOString().split('T')[0],
-      count: Math.floor(Math.random() * 20),
-    };
-  });
-
   useEffect(() => {
     loadStatistics();
   }, [period]);
@@ -131,11 +113,11 @@ export function StatistiquesPage() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ClassChart data={classData} isLoading={isLoading} />
-        <EvolutionChart data={evolutionData} isLoading={isLoading} />
+        <EvolutionChart data={stats?.by_day_of_week ?? []} isLoading={isLoading} />
       </div>
 
       {/* Heatmap */}
-      <HeatmapCalendar data={heatmapData} isLoading={isLoading} />
+      <HeatmapCalendar data={stats?.count_by_date ?? []} isLoading={isLoading} />
     </div>
   );
 }
