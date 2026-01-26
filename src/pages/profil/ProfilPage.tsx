@@ -171,27 +171,33 @@ export function ProfilPage() {
         <CardHeader>
           <CardTitle>📊 Statistiques personnelles</CardTitle>
           <CardDescription>
-            Votre activité sur CollègeCard
+            Votre activité sur l'application
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-6">
             <div className="text-center p-4 bg-violet-50 dark:bg-violet-900/20 rounded-lg">
-              <div className="text-3xl font-bold font-mono text-violet-primary">342</div>
+              <div className="text-3xl font-bold font-mono text-violet-primary">
+                {user?.stats.total_forgot_cards_recorded ?? 0}
+              </div>
               <div className="text-sm text-[var(--text-secondary)] mt-1">
-                Oublis enregistrés
+                Oublis enregistrés au total
               </div>
             </div>
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-              <div className="text-3xl font-bold font-mono text-green-primary">28</div>
+              <div className="text-3xl font-bold font-mono text-green-primary">
+                {user?.stats.current_week_recorded ?? 0}
+              </div>
               <div className="text-sm text-[var(--text-secondary)] mt-1">
-                Mots envoyés
+                Oublis enregistrés cette semaine
               </div>
             </div>
             <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <div className="text-3xl font-bold font-mono text-blue-600">156</div>
+              <div className="text-3xl font-bold font-mono text-blue-600">
+                {user?.stats.manual_notes_added ?? 0}
+              </div>
               <div className="text-sm text-[var(--text-secondary)] mt-1">
-                Jours actifs
+                Mots ajoutés
               </div>
             </div>
           </div>
@@ -269,33 +275,6 @@ export function ProfilPage() {
             <p className="text-sm text-[var(--text-secondary)] mt-2">
               Thème actuel : {actualTheme === 'dark' ? 'Sombre' : 'Clair'}
             </p>
-          </div>
-
-          {/* Keyboard Shortcuts */}
-          <div>
-            <Label className="text-base font-semibold mb-3 block">
-              Raccourcis clavier
-            </Label>
-            <div className="flex items-center justify-between p-4 border border-[var(--border)] rounded-lg">
-              <div className="flex items-center gap-3">
-                <Keyboard className="w-5 h-5 text-[var(--text-secondary)]" />
-                <div>
-                  <p className="font-medium text-[var(--text-primary)]">
-                    Activer les raccourcis clavier
-                  </p>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    Ctrl+K, Ctrl+H, Ctrl+S, etc.
-                  </p>
-                </div>
-              </div>
-              <Button
-                variant={keyboardShortcuts ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setKeyboardShortcuts(!keyboardShortcuts)}
-              >
-                {keyboardShortcuts ? 'Activé' : 'Désactivé'}
-              </Button>
-            </div>
           </div>
         </CardContent>
       </Card>

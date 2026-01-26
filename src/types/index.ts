@@ -8,6 +8,15 @@ export interface User {
   role: 'surveillant' | 'admin';
   created_at: string;
   last_login: string | null;
+  stats: {
+    total_forgot_cards_recorded: number;
+    current_week_recorded: number;
+    current_month_recorded: number;
+    manual_notes_added: number;
+    last_recorded_at: string | null;
+    week_number: number;
+    year: number;
+  }
 }
 
 export interface LoginCredentials {
