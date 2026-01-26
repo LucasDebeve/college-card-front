@@ -27,7 +27,6 @@ import {
   Sun, 
   Moon, 
   Monitor, 
-  Keyboard, 
   CheckCircle2,
   XCircle,
   Loader2
@@ -53,7 +52,6 @@ export function ProfilPage() {
   const { theme, setTheme, actualTheme } = useThemeStore();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [keyboardShortcuts, setKeyboardShortcuts] = useState(true);
 
   const {
     register,

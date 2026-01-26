@@ -1,8 +1,6 @@
-import { cloneElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
-import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -28,7 +26,7 @@ export function HeatmapCalendar({ data, isLoading }: HeatmapCalendarProps) {
   const today = new Date();
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(today.getMonth() - 6);
-  const weekdayLabels = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  const weekdayLabels: [string, string, string, string, string, string, string] = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
   const periodLabel = `${format(threeMonthsAgo, 'dd MMM', { locale: fr })} → ${format(today, 'dd MMM', { locale: fr })}`;
 
   return (
@@ -67,14 +65,15 @@ export function HeatmapCalendar({ data, isLoading }: HeatmapCalendarProps) {
               }}
               weekdayLabels={weekdayLabels}
               showWeekdayLabels
-              transformDayElement={(rect) =>
-                cloneElement(rect, {
-                  width: 8,
-                  height: 8,
-                  rx: 2,
-                  ry: 2,
-                })
-              }
+              transformDayElement={(rect) => (
+                <rect
+                  {...rect}
+                  width={8}
+                  height={8}
+                  rx={2}
+                  ry={2}
+                />
+              )}
             />
           </div>
         </div>
